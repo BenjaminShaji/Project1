@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Details Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Location Details Form</h1>
+        <div id="map" style="height: 400px; width: 100%;"></div>
+        <form id="locationForm">
+            <input type="hidden" id="latitude" name="latitude" required>
+            <input type="hidden" id="longitude" name="longitude" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="output" class="output"></div>
+    </div>
+    <script>
+        let map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+
+        map.on('click', function(e) {
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+            document.getElementById('latitude').value = e.latlng.lat;
+            document.getElementById('longitude').value = e.latlng.lng;
+        });
+
+        document.getElementById('locationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get('name');
+            const age = urlParams.get('age');
+            const department = urlParams.get('department');
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            
+            const output = document.getElementById('output');
+            output.innerHTML = `<p><strong>Name:</strong> ${name}</p>
+                                <p><strong>Age:</strong> ${age}</p>
+                                <p><strong>Department:</strong> ${department}</p>
+                                <p><strong>Latitude:</strong> ${latitude}</p>
+                                <p><strong>Longitude:</strong> ${longitude}</p>`;
+            
+            output.classList.add('show');
+        });
+    </script>
+</body>
+</html>
